@@ -1,8 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+
+function useLocalStorage(key, initialValue) {
+  const [storedValue, setStoredValue] = useState(() => {
+    const item = localStorage.getItem(key);
+    return item ? JSON.parse(item) : initialValue;
+  });
+
+  useEffect(() => {
+    localStorage.setItem(key, JSON.stringify(storedValue));
+  }, [key, storedValue]);
+  
+  return [storedValue, setStoredValue];
+}
 
 function Body() {
-  const [toDos, setToDos] = useState([]);
+  const [toDos, setToDos] = useLocalStorage("todos", []);
+
   const [toDo, setToDo] = useState("");
+
 
   const handleAddToDo = () => {
     if (toDo.trim() !== "") {
